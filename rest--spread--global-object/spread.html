@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>What is the Spread operator?</title>
+
+    <meta name="description" content="Parimatch Tech Academy - Spread operator">
+    <meta name="author" content="Oleksandr Tserkovnyi">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="dist/reset.css">
+    <link rel="stylesheet" href="dist/reveal.css">
+    <link rel="stylesheet" href="dist/theme/black.css" id="theme">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" id="highlight-theme">
+</head>
+
+<body>
+
+<div class="reveal">
+
+    <!-- Any section element inside of this container is displayed as a slide -->
+    <div class="slides">
+        <section data-background="images/jstips-animation.gif">
+            <h1>Spread</h1>
+
+        </section>
+
+        <section data-markdown>
+            ## What is it?
+
+            Operator which forces subject to iterate
+        </section>
+
+        <section>
+            <pre data-id="code-animation"><code class="hljs">
+                ...
+            </code></pre>
+        </section>
+
+        <section>
+            <section data-markdown>
+                ## Most common usage
+            </section>
+
+            <section data-auto-animate>
+                <p>In functions</p>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    function func (dataFirst, dataNext, dataSome) {
+                        console.log(dataSome); // 'dataSome'
+                    }
+
+                    func(...['dataFirst', 'dataNext', 'dataSome']);
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <p>In array literals</p>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    function func (dataFirst, dataNext, dataSome) {
+                        console.log(dataSome); // 'my friend'
+                    }
+
+                    const literal = ['my friend'];
+                    func(...['dataFirst', 'dataNext', ...literal]);
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <p>In array literals to copy</p>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    const original = [12, 13];
+                    const copyOfOriginal = [...original];
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <p>In array literals to copy but NOT deep</p>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers="|2,4">
+                    const a = [12, 13];
+                    const b = [a, 14, 15];
+                    const c = [...b];
+                    c[0] === b[0] // true
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <p>In string literals</p>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    const hiGuys = 'greet';
+                    [...hiGuys] // ["g", "r", "e", "e", "t"]
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <p>In object literals</p>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    const obj = {prop: true, and: 1, you: []};
+                    const result = {...obj, good: false};
+                    // {prop: true, and: 1, you: [], good: false}
+                    result.you === obj.you;
+                    // true
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <p>In object literals – new object is created</p>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers="|1|2-3|4-5|6-7">
+                    const obj = {prop: true, and: 1, you: []};
+                    const result = {...obj, you: [123]};
+                    // result does not have obj `prototype`
+                    result.you !== obj.you;
+                    // true
+                    result.you
+                    // [123]
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <p>In object literals – does not run setters</p>
+                <pre data-id="code-animation"><code class="hljs" data-trim>
+                    const a = Object.defineProperty(
+                        {},
+                        'p',
+                        { set () { console.log(123) } }
+                    );
+                    const b = {...a, p: 2};
+                    b.p === 2 // true;
+                    const assigned = Object.assign(a, {p: 2});
+                    // log: 123
+                    assigned.p === undefined // true
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <p>Map, Set and DOM collections</p>
+                <pre data-id="code-animation"><code class="hljs" data-trim>
+                    [ ...new Set([1,2,3]) ]; // [1,2,3]
+                    [ ...new Map([[1, 'one']]) ]; // [[1, 'one']]
+                    [ ...document.querySelectorAll('div') ] // [ div, div, div]
+                </code></pre>
+            </section>
+        </section>
+
+        <section>
+            <section>
+                <h2>Irreplaceable sometimes</h2>
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    const arr = [1, 2];
+                    const resultArr = [...arr, 3, 4];
+                    console.log(resultArr); // [1, 2, 3, 4]
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    const arr = [1, 2];
+                    const resultArr = [...arr, 3, 4];
+                    console.log(...resultArr); // 1 2 3 4
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    const arr = [1, 2];
+                    const resultArr = [...arr, 3, 4];
+                    console.log(...arr, ...resultArr); // 1 2 1 2 3 4
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <p>Could not be easily achieved before</p>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    const ES2018ReleaseDate = [2018, 5, 1];  // 1 Jun 2018
+                    const d = new Date(...ES2018ReleaseDate);
+                </code></pre>
+            </section>
+        </section>
+
+        <section>
+            <section data-markdown="">
+                ## Iterables
+            </section>
+
+            <section>
+                <p>Works only with iterable entities</p>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    const obj = {P: 1};
+                    [...obj] // TypeError: obj is not iterable
+                </code></pre>
+            </section>
+
+            <section>
+                <p>You can make anything iterable</p>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                      const obj = {P: 1};
+                      obj[Symbol.iterator] = function() {
+                        return {
+                          next: function() {
+                            if (!this._last) {
+                              this._last = true;
+                              return { value: ['P', 1], done: false };
+                            } else {
+                              return { done: true };
+                            }
+                          }
+                        };
+                      };
+                      [...obj] // ["P", 1]
+                </code></pre>
+            </section>
+
+            <section data-markdown>
+                ## @@iterator method
+
+                * String
+                * Array
+                * TypedArray
+                * Map
+                * Set
+            </section>
+
+        </section>
+
+        <section>
+            <section data-markdown>
+                ## Destructing
+            </section>
+
+            <section>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    let myArray = [1,2,3];
+                    let [a, b, c] = myArray;
+
+                    console.log(a); // 1
+                    console.log(b); // 2
+                    console.log(c); // 3
+                </code></pre>
+            </section>
+
+            <section>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    let myArray = [1, 2, 3, 4, 5];
+                    let [a, b, c, ...d] = myArray;
+
+                    console.log(a); // 1
+                    console.log(b); // 2
+                    console.log(c); // 3
+                    console.log(d); // [4, 5]
+                </code></pre>
+            </section>
+
+            <section>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    let myObject = { a: 1, b: 2, c: 3, d: 4};
+                    let {b, d, ...remaining} = myObject;
+
+                    console.log(b); // 2
+                    console.log(d); // 4
+                    console.log(remaining); // { a: 1, c: 3 }
+                </code></pre>
+            </section>
+        </section>
+    </div>
+
+</div>
+
+<script src="dist/reveal.js"></script>
+<script src="plugin/zoom/zoom.js"></script>
+<script src="plugin/notes/notes.js"></script>
+<script src="plugin/search/search.js"></script>
+<script src="plugin/markdown/markdown.js"></script>
+<script src="plugin/highlight/highlight.js"></script>
+<script>
+
+  // Also available as an ES module, see:
+  // https://revealjs.com/initialization/
+  Reveal.initialize({
+    controls: true,
+    progress: true,
+    center: true,
+    hash: true,
+
+    // Learn about plugins: https://revealjs.com/plugins/
+    plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight ]
+  });
+
+</script>
+
+</body>
+</html>

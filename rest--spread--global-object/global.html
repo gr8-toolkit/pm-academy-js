@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>What is the Global object?</title>
+
+    <meta name="description" content="Parimatch Tech Academy - Global object">
+    <meta name="author" content="Oleksandr Tserkovnyi">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="dist/reset.css">
+    <link rel="stylesheet" href="dist/reveal.css">
+    <link rel="stylesheet" href="dist/theme/black.css" id="theme">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" id="highlight-theme">
+</head>
+
+<body>
+
+<div class="reveal">
+
+    <!-- Any section element inside of this container is displayed as a slide -->
+    <div class="slides">
+        <section data-background="images/jstips-animation.gif">
+            <h1>Global object</h1>
+
+        </section>
+
+        <section data-markdown>
+            ## What is it?
+
+            Object accessible from any place
+        </section>
+
+        <section>
+            <p>
+                Browser <span class="fragment highlight-red">Window</span> = global object
+            </p>
+            <p>
+                Worker <span class="fragment highlight-green">WorkerGlobalScope</span> = global object.
+            </p>
+            <p>
+                Node.js <span class="fragment highlight-blue">global</span> = global object.
+            </p>
+        </section>
+
+        <section>
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    function func (...rest) {
+                        console.log(rest);
+                    }
+
+                    window.func === func // true
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    function func () {
+                        console.log(abc); // 123
+                        console.log(__config__); // {}
+                    }
+
+                    window.abc = 123;
+                    __config__ = {};
+                    func();
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <p>With 'use strict';</p>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers="|4,8|2,5,9">
+                    (function () {
+                        'use strict';
+                        function func () {
+                            console.log(abc); // 123
+                            console.log(__config__); // ReferenceError
+                        }
+
+                        window.abc = 123;
+                        __config__ = {};
+                        func();
+                    })();
+                </code></pre>
+            </section>
+
+            <section>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    let a = 1;
+                    const b = 2;
+                    window.a === undefined; // true
+                    window.b === undefined; // true
+                </code></pre>
+            </section>
+        </section>
+
+        <section data-markdown="">
+            ## Why to use?
+
+            * Access built-in methods and props e.g. setTimeout/setInterval
+            * Create Polyfills
+            * To store some initial public data like SSRed config
+        </section>
+
+        <section data-markdown="">
+            `globalThis`
+        </section>
+
+        <section>
+            <section data-markdown="">
+                ## Bottom object
+            </section>
+
+            <section data-markdown="">
+                `Object.prototype`
+            </section>
+
+            <section data-markdown="">
+                Traverse deep starting from window
+                you will end up in `Object.prototype`
+            </section>
+
+            <section>
+                <p>Why does it matter?</p>
+                <pre data-id="code-animation"><code class="hljs" data-trim>
+                    Object.prototype.PMAcademy = 'The best one!';
+                    window.PMAcademy // 'The best one!'
+                    Array.PMAcademy // 'The best one!'
+                    document.getElementById('theme').PMAcademy // 'The best one!'
+                    'How is that Parimatch Academy?'.PMAcademy // 'The best one!'
+                </code></pre>
+            </section>
+        </section>
+    </div>
+
+</div>
+
+<script src="dist/reveal.js"></script>
+<script src="plugin/zoom/zoom.js"></script>
+<script src="plugin/notes/notes.js"></script>
+<script src="plugin/search/search.js"></script>
+<script src="plugin/markdown/markdown.js"></script>
+<script src="plugin/highlight/highlight.js"></script>
+<script>
+
+  // Also available as an ES module, see:
+  // https://revealjs.com/initialization/
+  Reveal.initialize({
+    controls: true,
+    progress: true,
+    center: true,
+    hash: true,
+
+    // Learn about plugins: https://revealjs.com/plugins/
+    plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight ]
+  });
+
+</script>
+
+</body>
+</html>

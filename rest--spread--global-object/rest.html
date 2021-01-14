@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>What is the Rest parameters?</title>
+
+    <meta name="description" content="Parimatch Tech Academy - Rest parameters">
+    <meta name="author" content="Oleksandr Tserkovnyi">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="dist/reset.css">
+    <link rel="stylesheet" href="dist/reveal.css">
+    <link rel="stylesheet" href="dist/theme/black.css" id="theme">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" id="highlight-theme">
+</head>
+
+<body>
+
+    <div class="reveal">
+
+        <!-- Any section element inside of this container is displayed as a slide -->
+        <div class="slides">
+            <section data-background="images/jstips-animation.gif">
+                <h1>Rest parameters</h1>
+
+            </section>
+
+            <section data-markdown>
+                ## What is it?
+
+                Great syntax sugar, which helps to work with indefinite amount of parameters
+            </section>
+
+            <section>
+                <section data-auto-animate>
+                    <p>Raw example</p>
+                    <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                        function func (...rest) {
+                            console.log(rest);
+                        }
+
+                        func(1, 2, 3);
+                        // [1, 2, 3]
+                    </code></pre>
+                </section>
+
+                <section data-auto-animate>
+                    <p>Most common – as the arguments, which are left</p>
+                    <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                        function func (a, b, ...rest) {
+                            // `a` and `b` are extracted from `rest`
+                            console.log(rest);
+                        }
+
+                        func('needed', 'crucial', 'everything else');
+                        // ['everything else']
+                    </code></pre>
+                </section>
+
+                <section data-auto-animate>
+                    <p>Always the last</p>
+                    <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                        function func (a, ...rest, b) {
+                            console.log(rest);
+                        }
+
+                        func('needed', 'crucial', 'everything else');
+                        // SyntaxError: Rest parameter must be last formal parameter
+                    </code></pre>
+                </section>
+            </section>
+
+            <section data-markdown>
+                ## Drawbacks of old similar approach
+                arguments
+            </section>
+
+            <section>
+                <section data-auto-animate>
+                    <p>Even shorter! You may say</p>
+                    <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                        function func () {
+                            console.log(arguments);
+                        }
+
+                        func(1, 2, 3); // [1, 2, 3]
+                    </code></pre>
+                </section>
+
+                <section data-auto-animate>
+                    <p>Always all parameters, NOT only the rest</p>
+                    <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                        function func (a, b) {
+                            console.log(arguments);
+                        }
+
+                        func(1, 2, 3); // [1, 2, 3]
+                    </code></pre>
+                </section>
+
+                <section data-auto-animate>
+                    <p><s>Smells</s> Looks like an array</p>
+                    <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                        function func (a, b) {
+                            console.log(arguments[0] + arguments[1]);
+                        }
+
+                        func(1, 2); // 3
+                    </code></pre>
+                </section>
+
+                <section data-auto-animate>
+                    <p>But not an Array</p>
+                    <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                        function func (a, b) {
+                            console.log(arguments.map);
+                            console.log(arguments.shift);
+                            console.log(arguments.concat);
+                        }
+
+                        func(1, 2); // undefined x 3
+                    </code></pre>
+                </section>
+
+                <section data-auto-animate>
+                    <p>Oldfags used to use</p>
+                    <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers="|3">
+                        function func (a, b) {
+                            var myGreatArrayWithAllMethods =
+                                Array.prototype.slice.call(arguments);
+                            console.log(myGreatArrayWithAllMethods.map);
+                            console.log(myGreatArrayWithAllMethods.shift);
+                            console.log(myGreatArrayWithAllMethods.concat);
+                        }
+
+                        func(1, 2) // function { [native code] } x 3
+                    </code></pre>
+                </section>
+
+                <section data-auto-animate>
+                    <p>Arrow functions do not have arguments</p>
+                    <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                        const func = () => console.log(arguments)
+
+                        func(1, 2) // ReferenceError: arguments is not defined
+                    </code></pre>
+                </section>
+
+                <section data-auto-animate>
+                    <p>...or worse, they use arguments of a parent</p>
+                    <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                        (function () {
+                            const func = () => console.log(arguments)
+
+                            func(1, 2) // ['ho-ho-ho', 'xmas']
+                        })('ho-ho-ho', 'xmas');
+                    </code></pre>
+                </section>
+
+                <section data-auto-animate>
+                    <p>Hidden dangerous features</p>
+                    <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                        (function callFunction () {
+                            console.log(arguments.callee);
+                        })();
+                        // content of `callFunction`
+                    </code></pre>
+                </section>
+
+                <section data-auto-animate>
+                    <p>...which are resticted in 'use strict' mode</p>
+                    <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                        (function callFunction () {
+                            'use strict';
+                            console.log(arguments.callee);
+                        })();
+                        // TypeError: 'callee' may not be accessed on strict mode
+                    </code></pre>
+                </section>
+            </section>
+
+            <section data-markdown>
+                ## Advantages of
+                rest parameters
+            </section>
+
+            <section>
+                <section data-markdown>
+                    <ul>
+                        <li>Only rest parameters (left)</li>
+                        <li>Always an array</li>
+                    </ul>
+                </section>
+            </section>
+
+        </div>
+
+    </div>
+
+    <script src="dist/reveal.js"></script>
+    <script src="plugin/zoom/zoom.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/search/search.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script>
+
+      // Also available as an ES module, see:
+      // https://revealjs.com/initialization/
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        center: true,
+        hash: true,
+
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight ]
+      });
+
+    </script>
+
+</body>
+</html>
