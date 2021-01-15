@@ -63,8 +63,8 @@
         </section>
 
         <section>
-            <section data-markdown="">
-                ## LexicalEnvironment
+            <section data-markdown>
+                `LexicalEnvironment`
             </section>
 
             <section data-markdown="">
@@ -252,7 +252,7 @@
             </section>
 
             <section data-auto-animate>
-                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers="|5,8">
                     const divs = document.querySelectorAll('div');
                     let index = 0;
 
@@ -271,7 +271,9 @@
                     let index = 0;
 
                     for (; index < divs.length; index+=1) {
-                        divs[index].onmouseover = function () { console.log(arguments.callee.index) };
+                        divs[index].onmouseover = function () {
+                            console.log(arguments.callee.index)
+                        };
                         divs[index].onmouseover.index = index;
                     }
                 </code></pre>
