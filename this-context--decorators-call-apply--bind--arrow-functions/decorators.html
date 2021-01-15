@@ -42,10 +42,106 @@
         <section>
             <section data-auto-animate>
                 <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
-                    function log () {
-                        console.log(this);
+                    function calculate (number = 10000000) {
+                        console.time('calculate');
+                        let result = 0;
+                        for (let index = 0; index < number; index += 1) {
+                          result = result += index;
+                        }
+                        console.timeEnd('calculate');
+                        return result;
                     }
                 </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    function memo (func) {
+                        const cache = {};
+
+                        return function memoiedFunc (arg) {
+                            if (cache[arg]) {
+                                return cache[arg];
+                            }
+
+                            // result
+                            cache[arg] = func(arg);
+
+                            return cache[arg];
+                        };
+                    }
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    function memo (func) {
+                        const cache = {};
+
+                        return function memoiedFunc (arg) {
+                            const date = Date.now();
+                            if (cache[arg]) {
+                                console.log('EXISTING in memoiedFunc = ' + (Date.now() - date));
+                                return cache[arg];
+                            }
+
+                            // result
+                            cache[arg] = func(arg);
+                            console.log('NEW in memoiedFunc = ' + (Date.now() - date));
+
+                            return cache[arg];
+                        };
+                    }
+
+                    function calculate (number = 10000000) {
+                        console.time('calculate');
+                        let result = 0;
+                        for (let index = 0; index < number; index += 1) {
+                          result = result += index;
+                        }
+                        console.timeEnd('calculate');
+                        return result;
+                    }
+
+                    const memoiedCalculate = memo(calculate);
+                    memoiedCalculate(1000000000); // cold call, Heavy one
+                    memoiedCalculate(1000000000); // warm 0ms
+                    memoiedCalculate(1000000000); // warm 0ms
+                    memoiedCalculate(1000000000); // warm 0ms
+                    memoiedCalculate(999900); // cold call, Heavy one
+                    memoiedCalculate(999900); // warm 0ms
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers="|10,16-20">
+                    function memo (func) {
+                        const cache = {};
+
+                        return function memoiedFunc (...args) {
+                            if (cache[args]) {
+                                return cache[args];
+                            }
+
+                            // result
+                            cache[args] = func.apply(this, args);
+
+                            return cache[args[0]];
+                        };
+                    }
+
+                    rand = memo(Math.random.bind(Math));
+                    rand(25, 35);
+                    rand(12, 11);
+                    rand(12, 6);
+                    rand(12, 11); // warm
+                </code></pre>
+            </section>
+        </section>
+
+        <section>
+            <section>
+                // TODO Podgorniy friend
             </section>
         </section>
 
