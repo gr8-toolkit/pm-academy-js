@@ -6,7 +6,7 @@
 
     <title>What is the Context in functions?</title>
 
-    <meta name="description" content="Parimatch Tech Academy - this context in functions. Decorators and call forwarding, call / apply. Binding a context to a function, bind. Context in arrow functions">
+    <meta name="description" content="Parimatch Tech Academy - this context in functions, call / apply. Binding a context to a function, bind. Context in arrow functions">
     <meta name="author" content="Oleksandr Tserkovnyi">
 
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -28,20 +28,311 @@
 
     <!-- Any section element inside of this container is displayed as a slide -->
     <div class="slides">
-        <section data-background="images/wallhaven-4ojvg5.jpg">
+        <section data-background="images/wallhaven-q6jvjl.jpg">
             <h1>Context in functions</h1>
 
         </section>
 
         <section data-markdown>
             ## What is it?
+
+            `this`
         </section>
 
         <section>
             <section data-auto-animate>
                 <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
-
+                    function log () {
+                        console.log(this);
+                    }
                 </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <p>Global context</p>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    this === window // true
+
+                    function log () {
+                        console.log(this);
+                    }
+
+                    log(); // window | undefined in 'use strict';
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <p>Function context</p>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    function log () {
+                        console.log(this);
+                    }
+
+                    log(); // window | undefined in 'use strict';
+                    const obj = {};
+                    obj.log = log;
+                    obj.log(); // obj
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <p>Might be lost</p>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    function log () {
+                        console.log(this);
+                    }
+
+                    const obj = {};
+                    obj.log = log;
+                    (false || obj.log)(); // window | undefined in 'use strict';
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <p>Might be lost 2</p>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    const methods = {
+                        greet () {
+                            console.log(this);
+                        }
+                    };
+                    methods.greet(); // methods
+                    const lostContext = methods.greet;
+                    lostContext(); // Window
+                </code></pre>
+            </section>
+        </section>
+
+        <section>
+            <section data-markdown data-background="images/1Ppt.gif">
+                ## Context rescue operation
+            </section>
+
+            <section data-markdown>
+                `call`
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    const methods = {
+                        greet () {
+                            console.log(this);
+                        }
+                    };
+                    methods.greet(); // methods
+                    const lostContext = methods.greet;
+                    lostContext.call(methods); // methods
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <p>With arguments</p>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    const methods = {
+                        greet (name) {
+                            console.log(this, name);
+                        }
+                    };
+                    methods.greet('Stefan');
+                    const lostContext = methods.greet;
+                    lostContext.call(methods, 'Stefan');
+                </code></pre>
+            </section>
+
+            <section data-markdown>
+                `apply`
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    const methods = {
+                        greet () {
+                            console.log(this);
+                        }
+                    };
+                    methods.greet(); // methods
+                    const lostContext = methods.greet;
+                    lostContext.apply(methods); // methods
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <p>With arguments</p>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    const methods = {
+                        greet (name) {
+                            console.log(this, name);
+                        }
+                    };
+                    methods.greet('Stefan');
+                    const lostContext = methods.greet;
+                    lostContext.apply(methods, ['Stefan']);
+                </code></pre>
+            </section>
+
+            <section data-markdown>
+                `bind`
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    const methods = {
+                        greet (name) {
+                            console.log(this, name);
+                        }
+                    };
+                    methods.greet(); // methods
+                    const rescuedContext = methods.greet.bind(methods);
+                    rescuedContext('Oleg'); // methods
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <p>With arguments</p>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    const methods = {
+                        greet (name) {
+                            console.log(this, name);
+                        }
+                    };
+                    methods.greet(); // methods
+                    const rescuedContext = methods.greet.bind(methods, 'Oleg');
+                    rescuedContext(); // methods
+                </code></pre>
+            </section>
+        </section>
+
+        <section>
+            <section data-markdown>
+                ## Arrow functions
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    const NonArrowHi = function (name) { console.log(`Hi ${name}`) };
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    const arrowHi = (name) => { return console.log(`Hi ${name}`) };
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    const arrowHiShort = (name) => console.log(`Hi ${name}`);
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim>
+                    const hi = name => console.log(`Hi ${name}`);
+                </code></pre>
+            </section>
+
+            <section data-markdown>
+                ## Context in arrow functions
+            </section>
+
+            <section data-markdown>
+                Always parent context
+            </section>
+
+            <section data-markdown data-auto-animate>
+                ```
+                const getThis = () => console.log(this);
+                getThis() // window
+                const obj = { getThis };
+                obj.getThis(); // window
+                obj.getThis.call({ tellMeWhy: true }); // window
+                obj.getThis.apply({ tellMeWhy: true }); // window
+                obj.getThis.bind({ tellMeWhy: true })(); // window
+                ```
+            </section>
+
+            <section data-markdown data-auto-animate>
+                ```
+                const parent = function papa () {
+                    const getThis = () => console.log(this, arguments);
+                    return getThis();
+                };
+                parent() // window []
+                parent.call({ tellMeWhy: true }) // { tellMeWhy: true } []
+                parent.apply({ gr: 1 }, ['argument']) // { gr: 1 } 'argument'
+                ```
+            </section>
+
+            <section data-markdown data-auto-animate>
+                ```
+                const obj = {
+                    method: () => {
+                        console.log(this);
+                    }
+                };
+
+                obj.method(); // window
+                ```
+            </section>
+
+        </section>
+
+        <section>
+            <section data-markdown>
+                ## Context in Constructor
+            </section>
+
+            <section data-markdown>
+                ```
+                class Car {
+                    constructor () {
+                        console.log(this);
+                    }
+                }
+
+                new Car(); // `Car` instance
+                ```
+            </section>
+
+            <section>
+                is referenced to object, which is just being created
+            </section>
+        </section>
+
+        <section>
+            <section data-markdown>
+                ## Context sum up
+            </section>
+
+            <section data-markdown>
+                * Global context
+                * Function context
+                * Object method context
+                * Arrow function context
+                * Constructor context
+            </section>
+        </section>
+
+        <section>
+            <section data-markdown>
+                ## Most known context pattern
+
+                `currying`
+            </section>
+
+            <section data-markdown>
+                a.k.a partial execution pattern
+
+                ```
+                const partial = (func, arguments) => {
+                    return func.bind(this, ...arguments)
+                };
+
+                const multiply = (mult, a, b) => (a + b) * mult;
+
+                const currying = partial(multiply, [2, 5]);
+                currying(10);
+                ```
             </section>
         </section>
 
