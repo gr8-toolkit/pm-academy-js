@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>What is the Constructor functions?</title>
+
+    <meta name="description" content="Parimatch Tech Academy - Constructor functions">
+    <meta name="author" content="Oleksandr Tserkovnyi">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="dist/reset.css">
+    <link rel="stylesheet" href="dist/reveal.css">
+    <link rel="stylesheet" href="dist/theme/black.css" id="theme">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" id="highlight-theme">
+</head>
+
+<body>
+
+<div class="reveal">
+
+    <!-- Any section element inside of this container is displayed as a slide -->
+    <div class="slides">
+        <section data-background="images/TL80.gif">
+            <h1>Constructor functions</h1>
+
+        </section>
+
+        <section data-markdown>
+            ## What is it?
+
+            Simple function, but it creates **`new`** objects
+        </section>
+
+        <section>
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    function Gift (name, priceTill) {
+                        this.name = name;
+                        this.priceTill = priceTill;
+                        this.currency = 'UAH';
+                    }
+
+                    Gift.prototype.iWant = function () {
+                        return `I want to buy a gift,
+                            this should be ${this.name},
+                            my budget is ${this.priceTill}${this.currency}`;
+                    };
+
+                    const gift = new Gift('something', 400);
+                    alert(gift.iWant());
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers="|2|3|7">
+                    function Gift (name, priceTill) {
+                        // [[Construct]] new object -> {}
+                        // [[Assign]] this = new object
+                        this.name = name;
+                        this.priceTill = priceTill;
+                        this.currency = 'UAH';
+                        // [[Return]] this
+                    }
+                </code></pre>
+            </section>
+
+        </section>
+
+        <section>
+            <section data-markdown>
+                ## instance
+
+                Name of a created entity from the constructor
+            </section>
+
+            <section>
+                <p><code>instanceof</code></p>
+
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    function Gift () {}
+                    const gift = new Gift();
+                    gift instanceof Gift // true
+                    gift instanceof Object // true
+                    gift instanceof Function // false
+                </code></pre>
+            </section>
+
+            <section>
+                <blockquote>
+                    проверяет, присутствует ли объект Gift.prototype в цепочке прототипов gift
+                </blockquote>
+                <q cite="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/instanceof">
+                    The instanceof operator tests to see if the prototype property of a constructor appears anywhere in the prototype chain of an object
+                </q>
+            </section>
+        </section>
+
+        <section>
+            <section data-markdown>
+                ## Returning value
+            </section>
+
+            <section data-markdown>
+                Return nothing if you ~~are human~~ want an instance
+
+                This is default scenario
+            </section>
+
+            <section data-markdown>
+                Return object if you want to alter the [[Construct]]
+            </section>
+
+            <section data-markdown>
+                Returning primitive will have no effect
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers="|2|3|7">
+                    // new object | default scenario
+                    function Gift () {}
+                    // [] is used as a returning instance
+                    function Gift () { return []; }
+                    // no effect | default scenario
+                    function Gift () { return 'Hi there!'; }
+                </code></pre>
+            </section>
+        </section>
+
+        <section>
+            <section data-markdown data-background="images/alien.gif">
+                ## Alien usage
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers="|7">
+                    function Gift (name, priceTill) {
+                        this.name = name;
+                        this.priceTill = priceTill;
+                        this.currency = 'UAH';
+                    }
+
+                    const gift = Gift();
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers="|2,9">
+                    function Gift (name, priceTill) {
+                        'use strict';
+                        this.name = name;
+                        this.priceTill = priceTill;
+                        this.currency = 'UAH';
+                    }
+
+                    const gift = Gift();
+                    // TypeError: Cannot set property 'name' of undefined
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers="|2,9">
+                    (function () {
+                        'use strict';
+                        function Gift (name) {
+                            this.name = name;
+                        }
+                        function Currency (currency = 'UAH') {
+                            this.currency = currency;
+                        }
+                        const gift = Gift();
+                        const hryvna = Currency('UAH');
+                        // TypeError: Cannot set property ... of undefined
+                    })();
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <p>Ripley style</p>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers="|2-4">
+                    function Gift (name) {
+                        if ((this instanceof Gift) === false) {
+                            return new Gift(name);
+                        }
+                        this.name = name;
+                    }
+
+                    const gift = Gift('How is that even?');
+                    gift.name // 'How is that even?'
+                </code></pre>
+            </section>
+
+            <section
+                    data-background="https://upload.wikimedia.org/wikipedia/ru/0/0e/Aliens1703.jpg"
+                    data-background-repeat="no-repeat"
+                    data-background-size="50%"
+            ></section>
+        </section>
+
+        <section>
+            <section data-markdown>
+                ## Details
+            </section>
+
+            <section data-markdown>
+                Create method within `constructor` or in `prototype`?
+            </section>
+
+            <section>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    function Gift (name) {
+                        this.say = function () { alert('So...') };
+                    }
+
+                    Gift.prototype.say = function () { alert('So...') };
+                </code></pre>
+            </section>
+
+            <section data-markdown data-background-iframe="https://www.youtube.com/embed/7tTfL-DtpXk">
+            </section>
+
+            <section data-markdown>
+                * Methods are the same but different
+                * Memory allocation question
+                * Hard to update
+            </section>
+
+            <section data-markdown>
+                In some proprietary derivatives of JavaScript like CoffeeScript or TypeScript
+                constructor properties assignment implemented in more clever way:
+
+                * CoffeeScript - [@name](https://coffeescript.org/#classes)
+                * TypeScript - [constructor parameter properties](https://www.typescriptlang.org/play?#code/MYGwhgzhAEDywBcD2AHArjA3gKGtATgKZgAmSAdiAJ7TloC2ARofrAGYAyhA5hAFy0GzfNAC80ABwBuXNGAUICfGkRJ8ACiKkK1WmHqEBi-AEty3AJTRMAX2x3sIQgmglSY2oQDucVegjqAEQAsmDk0F4mCAAW0DGEktDGFNzQTryBFjJuJAB05PqEUkA)
+            </section>
+        </section>
+
+    </div>
+
+</div>
+
+<script src="dist/reveal.js"></script>
+<script src="plugin/zoom/zoom.js"></script>
+<script src="plugin/notes/notes.js"></script>
+<script src="plugin/search/search.js"></script>
+<script src="plugin/markdown/markdown.js"></script>
+<script src="plugin/highlight/highlight.js"></script>
+<script>
+
+  // Also available as an ES module, see:
+  // https://revealjs.com/initialization/
+  Reveal.initialize({
+    controls: true,
+    progress: true,
+    center: true,
+    hash: true,
+
+    // Learn about plugins: https://revealjs.com/plugins/
+    plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight ]
+  });
+
+</script>
+
+</body>
+</html>
