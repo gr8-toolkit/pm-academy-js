@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>What is the Closures?</title>
+
+    <meta name="description" content="Parimatch Tech Academy - Closures">
+    <meta name="author" content="Oleksandr Tserkovnyi">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="dist/reset.css">
+    <link rel="stylesheet" href="dist/reveal.css">
+    <link rel="stylesheet" href="dist/theme/black.css" id="theme">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" id="highlight-theme">
+</head>
+
+<body>
+
+<div class="reveal">
+
+    <!-- Any section element inside of this container is displayed as a slide -->
+    <div class="slides">
+        <section data-background="images/wallhaven-4ojvg5.jpg">
+            <h1>Closures</h1>
+
+        </section>
+
+        <section data-markdown>
+            ## What is it?
+
+            Process of storing an access to the latest state of a reference
+        </section>
+
+        <section>
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    function closured () {}
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    function closured () {
+                        debugger;
+                    }
+                    val = 121367512;
+                    val2 = Math.random();
+                    closured();
+                    // show arguments, val and val2
+                    val = 121367512;
+                    val2 = Math.random();
+                    closured();
+                </code></pre>
+            </section>
+        </section>
+
+        <section>
+            <section data-markdown="">
+                ## LexicalEnvironment
+            </section>
+
+            <section data-markdown="">
+                Stack
+
+                which is populated with variables of current scope and outer scope
+
+                till the Global object
+            </section>
+
+            <section>
+                <object type="image/svg+xml" data="/article/closure/lexical-environment-simple.svg" width="711" height="150" class="image__image">
+                    <img src="./images/closure/lexical-environment-simple.svg" alt="" width="711" height="150">
+                </object>
+
+                <br>
+
+                <a href="https://learn.javascript.ru/closure">source</a>
+            </section>
+
+            <section data-markdown>
+                When function instantiates **NOT** when they are run
+            </section>
+
+            <section>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    const name = 'outside the function';
+                    const getNameInModule = (function () {
+                        const name = 'within module function';
+                        function getName () { return name; };
+                        return getName;
+                    })();
+
+                    function getNameOutside () {
+                        return name;
+                    };
+
+                    getNameOutside(); // 'outside the function'
+                    getNameInModule(); // 'within module function'
+                </code></pre>
+            </section>
+        </section>
+
+        <section>
+            <section data-markdown>
+                ## Latest state
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    let name = 'outside';
+                    function getNameOutside () {
+                        return name;
+                    };
+                    getNameOutside(); // 'outside';
+                    name = 'latest';
+                    getNameOutside(); // 'latest';
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers="|6">
+                    function counter (start = 0) {
+                        let count = start;
+                        return {
+                            increase: function (amount = 1) { count += amount },
+                            decrease: function (amount = 1) { count -= amount },
+                            getValue: function () { return count },
+                        };
+                    };
+                    const count = counter(10);
+                    count.decrease();
+                    count.decrease();
+                    count.decrease();
+                    count.getValue(); // 7
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    getValue: count
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    let count = Number;
+                    getValue: count
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    let count = Number;
+                    // Number is primitive
+                    // primitive values are executed at once / copied
+                    getValue: 0
+                </code></pre>
+            </section>
+        </section>
+
+        <section>
+            <section data-markdown>
+                ## Private methods
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    function counter (start = 0) {
+                        let count = start;
+                        return {
+                            increase: function (amount = 1) { count += amount },
+                            decrease: function (amount = 1) { count -= amount },
+                            getValue: function () { return count },
+                        };
+                    };
+                    const count = counter(10);
+                    count.count // undefined
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers="|3,8">
+                    function counter (start = 0) {
+                        let count = start;
+                        function valueGetter () { return count }
+                        return {
+                            increase: function (amount = 1) { count += amount },
+                            decrease: function (amount = 1) { count -= amount },
+                            getValue: function returningValue () {
+                                return valueGetter() + start;
+                            }
+                        };
+                    };
+                    const count = counter(10);
+                    count.increase(20);
+                    count.increase(40);
+                    count.getValue(); // 80
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    function counter (start = 0) {
+                        // ...
+                        function valueGetter () { return count }
+                        return {
+                            // ...
+                        };
+                    };
+                    const count = counter(10);
+                    // ...
+                    counter.valueGetter // undefined = private
+                </code></pre>
+            </section>
+        </section>
+
+        <section>
+            <section data-markdown>
+                ## Common mistake is latest state
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    const divs = document.querySelectorAll('div');
+                    let index = 0;
+
+                    for (; index < divs.length; index+=1) {
+                        divs[index].onmouseover = function () { console.log(index) };
+                    }
+                </code></pre>
+            </section>
+
+            <section data-background="images/5JO.gif" data-background-size="80%">
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers="|3">
+                    const divs = document.querySelectorAll('div');
+
+                    for (let index = 0; index < divs.length; index+=1) {
+                        divs[index].onmouseover = function () { console.log(index) };
+                    }
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    const divs = document.querySelectorAll('div');
+                    let index = 0;
+
+                    for (; index < divs.length; index+=1) {
+                        (function (indexInternal) {
+                            // indexInternal is closured with the latest value
+                            divs[indexInternal].onmouseover = function () { console.log(indexInternal) };
+                        })(index);
+                    }
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    const divs = document.querySelectorAll('div');
+                    let index = 0;
+
+                    for (; index < divs.length; index+=1) {
+                        divs[index].onmouseover = function () { console.log(arguments.callee.index) };
+                        divs[index].onmouseover.index = index;
+                    }
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    const divs = document.querySelectorAll('div');
+                    let index = 0;
+
+                    for (; index < divs.length; index+=1) {
+                        divs[index].onmouseover = function () {
+                            'use strict';
+                            console.log(arguments.callee.index);
+                        };
+                        divs[index].onmouseover.index = index;
+                    }
+                    // Uncaught TypeError
+                </code></pre>
+            </section>
+
+            <section data-auto-animate>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers="|5,7">
+                    const divs = document.querySelectorAll('div');
+                    let index = 0;
+
+                    for (; index < divs.length; index+=1) {
+                        divs[index].onmouseover = function named () {
+                            'use strict';
+                            console.log(named.index);
+                        };
+                        divs[index].onmouseover.index = index;
+                    }
+                </code></pre>
+            </section>
+        </section>
+
+        <section>
+            <!-- This is something what I wanted to put, but censored -->
+            <!--<section data-background="images/4cuL.gif">-->
+            <section data-background="images/3Eu.gif" data-background-size="80%">
+            </section>
+
+            <section>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                    const func = function (closuredValue) {
+                        return function closured () {
+                            // I have an access to `closuredValue`
+                            // and outer scope, which is `window`
+                        };
+                    };
+                </code></pre>
+            </section>
+        </section>
+
+    </div>
+
+</div>
+
+<script src="dist/reveal.js"></script>
+<script src="plugin/zoom/zoom.js"></script>
+<script src="plugin/notes/notes.js"></script>
+<script src="plugin/search/search.js"></script>
+<script src="plugin/markdown/markdown.js"></script>
+<script src="plugin/highlight/highlight.js"></script>
+<script>
+
+  // Also available as an ES module, see:
+  // https://revealjs.com/initialization/
+  Reveal.initialize({
+    controls: true,
+    progress: true,
+    center: true,
+    hash: true,
+
+    // Learn about plugins: https://revealjs.com/plugins/
+    plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight ]
+  });
+
+</script>
+
+</body>
+</html>
